@@ -3,10 +3,8 @@
 void	init(t_ping *ping)
 {
 	ping->packet_size = 56;
-
 	ping->rtt_min = DBL_MAX;
 	ping->linger = 10;
-
 }
 
 
@@ -35,29 +33,23 @@ void	parse_args(int argc, char **argv, t_ping *ping)
 		switch(opt) {
 			case 'v':
 				ping->verbose = true;
-				// printf("ping->verbose = %d\n\n", ping->verbose);
 				break;
 			case 'n':
 				ping->numeric = true;
-				// printf("ping->numeric = %d\n\n", ping->numeric);
 				break;
 			case 'c':
 				ping->count = atoi(optarg);
 				ping->has_count = true;
-				// printf("ping->count = %d\nping->hascount = %d\n\n",ping->count, ping->has_count);
 				break;
 			case 's':
 				ping->packet_size = atoi(optarg);
-				// printf("ping->packet_size = %d\n\n",ping->packet_size);
 				break;
 			case 'w':
 				ping->timeout = atoi(optarg);
 				ping->has_timeout = true;
-				// printf("ping->timeout = %d\nping->has_timeout = %d\n\n", ping->timeout, ping->has_timeout);
 				break;
 			case 'W':
 				ping->linger = atoi(optarg);
-				// printf("ping->linger %d\n\n",ping->linger);
 				break;
 			case '?' :
 				if (optopt == '?')
@@ -73,7 +65,6 @@ void	parse_args(int argc, char **argv, t_ping *ping)
 	if (argv[optind])
 	{
 		ping->dest = argv[optind];
-		// printf("\nping->dest = %s\n", ping->dest);
 	}
 	else
 	{
@@ -114,6 +105,24 @@ void	init_hostname(t_ping *ping)
 }
 
 
+void	init_socket(t_ping *ping)
+{
+	ping->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	
+	if (ping->sockfd < 0)
+	{
+		fprintf(stderr, "ft_ping: Lacking privilege for icmp socket.\n");
+		exit(1);
+	}
+
+	struct timeval time;
+
+	time.tv_sec = ping->linger;
+	time.tv_usec = 0;
+	setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &time, sizeof(time));
+}
+
+
 
 
 int main(int argc, char **argv)
@@ -126,6 +135,8 @@ int main(int argc, char **argv)
 	parse_args(argc, argv, &ping);
 
 	init_hostname(&ping);
+
+	init_socket(&ping);
 
 	return (0);
 }

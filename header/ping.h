@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <netinet/in.h>
+#include <netinet/ip_icmp.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
