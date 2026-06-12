@@ -84,6 +84,38 @@ void	parse_args(int argc, char **argv, t_ping *ping)
 }
 
 
+void	init_hostname(t_ping *ping)
+{
+	int				status;
+	struct addrinfo	hints, *res;
+
+	memset(&hints, 0, sizeof(hints));
+
+	hints.ai_family = AF_INET;
+	status = getaddrinfo(ping->dest, NULL, &hints, &res);
+	if (status != 0)
+	{
+		fprintf(stderr, "ft_ping: unknown host\n");
+		exit(1);
+	}
+
+	memcpy(&ping->dest_addr, res->ai_addr, sizeof(struct sockaddr_in));
+
+	freeaddrinfo(res);
+
+	// //check 
+
+	// char ip[INET_ADDRSTRLEN];
+	// inet_ntop(AF_INET, &ping->dest_addr.sin_addr, ip, sizeof(ip));
+	// printf("resolved IP: %s\n", ip);
+
+	// //check 
+
+}
+
+
+
+
 int main(int argc, char **argv)
 {
 
@@ -92,6 +124,8 @@ int main(int argc, char **argv)
 	init(&ping);
 
 	parse_args(argc, argv, &ping);
+
+	init_hostname(&ping);
 
 	return (0);
 }
