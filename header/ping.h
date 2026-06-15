@@ -13,8 +13,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-
-
+#include <stdint.h>
 #include <arpa/inet.h>
 
 
@@ -61,5 +60,9 @@ void	parse_args(int argc, char **argv, t_ping *ping);
 void	init_hostname(t_ping *ping);
 void	init_socket(t_ping *ping);
 
+
+// packet.c
+uint16_t	checksum(void *data, int len);
+void		build_packet(t_ping *ping, char *buffer);
 
 #endif
