@@ -106,17 +106,22 @@ void	init_hostname(t_ping *ping)
 
 void	init_socket(t_ping *ping)
 {
+	struct timeval time;
+
 	ping->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-	
 	if (ping->sockfd < 0)
 	{
 		fprintf(stderr, "ft_ping: Lacking privilege for icmp socket.\n");
 		exit(1);
 	}
 
-	struct timeval time;
-
 	time.tv_sec = ping->linger;
 	time.tv_usec = 0;
-	setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &time, sizeof(time));
+	if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &time, sizeof(time)) < 0)
+	{
+		perror("ft_ping: setsockopt failure");
+		exit (1);
+	}
+
+	ping->id = getpid() & 0xFFFF;
 }
