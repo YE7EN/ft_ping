@@ -61,8 +61,14 @@ void	init_hostname(t_ping *ping);
 void	init_socket(t_ping *ping);
 
 
-// packet.c
+// PACKET.C
 uint16_t	checksum(void *data, int len);
 void		build_packet(t_ping *ping, char *buffer);
+
+// SEND.C
+void	send_packet(t_ping *ping, char *buffer);
+
+// RECEPTION.C
+
 
 #endif
