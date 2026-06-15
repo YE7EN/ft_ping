@@ -6,7 +6,7 @@ SRC_DIR = src
 OBJ_DIR	= obj
 HDR_DIR = header
 
-SRCS	= main.c utils.c
+SRCS	= main.c init.c utils.c
 OBJS	= $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 HEADERS = $(HDR_DIR)/ping.h
 
