@@ -49,4 +49,17 @@ typedef struct s_ping
 	struct timeval		start_time;
 }	t_ping;
 
+
+// MAIN.C
+int main(int argc, char **argv);
+
+
+// INIT.C
+void	init(t_ping *ping);
+void	print_help(void);
+void	parse_args(int argc, char **argv, t_ping *ping);
+void	init_hostname(t_ping *ping);
+void	init_socket(t_ping *ping);
+
+
 #endif
