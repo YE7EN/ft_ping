@@ -14,5 +14,14 @@ int main(int argc, char **argv)
 
 	init_socket(&ping);
 
+	print_header();
+
+
+	char buffer[sizeof(struct icmphdr) + ping.packet_size];
+	send_packet(&ping, buffer);
+
+
+	receive_packet(&ping);
+
 	return (0);
 }
