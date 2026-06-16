@@ -69,6 +69,7 @@ void		build_packet(t_ping *ping, char *buffer);
 void	send_packet(t_ping *ping, char *buffer);
 
 // RECEPTION.C
-
+void	receive_packet(t_ping *ping);
+void	decode_packet(t_ping *ping, char *recv_buffer, ssize_t recv_len);
 
 #endif
