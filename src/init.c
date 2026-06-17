@@ -22,43 +22,58 @@ void	print_help(void)
 	printf("  -?                         give this help list\n");
 }
 
+bool	is_number(char *str)
+{
+	int i = 0;
+
+	if (!str || !str[0])
+		return (false);
+	while(str[i])
+	{
+		if (!isdigit(str[i]))
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+
+int parse_number(char *optarg)
+{
+	if (!is_number(optarg))
+	{
+		fprintf(stderr, "ft_ping: invalid value (`%s' near `%s')\n", optarg, optarg);
+		exit(1);
+	}
+	return atoi(optarg);
+}
 
 void	parse_args(int argc, char **argv, t_ping *ping)
 {
 	int opt;
 	opterr = 0;
 
-	while ((opt = getopt(argc, argv, "vnc?:s:w:W:")) != -1)
+	while ((opt = getopt(argc, argv, ":vnc:s:w:W:")) != -1)
 	{
-		switch(opt) {
-			case 'v':
-				ping->verbose = true;
-				break;
-			case 'n':
-				ping->numeric = true;
-				break;
-			case 'c':
-				ping->count = atoi(optarg);
-				ping->has_count = true;
-				break;
-			case 's':
-				ping->packet_size = atoi(optarg);
-				break;
-			case 'w':
-				ping->timeout = atoi(optarg);
-				ping->has_timeout = true;
-				break;
-			case 'W':
-				ping->linger = atoi(optarg);
-				break;
-			case '?' :
-				if (optopt == '?')
+		switch (opt) {
+			case 'v': ping->verbose = true; break;
+			case 'n': ping->numeric = true; break;
+			case 'c': ping->count = parse_number(optarg); ping->has_count = true; break;
+			case 's': ping->packet_size = parse_number(optarg); break;
+			case 'w': ping->timeout = parse_number(optarg); ping->has_timeout = true; break;
+			case 'W': ping->linger = parse_number(optarg); break;
+			case ':':
+				fprintf(stderr, "ft_ping: option requires an argument -- '%c'\n", optopt);
+				fprintf(stderr, "Try 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
+				exit(64);
+			case '?':
+				if (optopt == '?' || optopt == 0)
 				{
 					print_help();
 					exit(0);
 				}
 				fprintf(stderr, "ft_ping: invalid option -- '%c'\n", optopt);
-				fprintf(stderr, "Try 'ping --help' or 'ping --usage' for more information.\n");
+				fprintf(stderr, "Try 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
 				exit(64);
 		}
 	}
@@ -68,7 +83,7 @@ void	parse_args(int argc, char **argv, t_ping *ping)
 	}
 	else
 	{
-		fprintf(stderr,"ft_ping: missing host operand\nTry 'ping --help' or 'ping --usage' for more information.\n");
+		fprintf(stderr,"ft_ping: missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
 		exit(64);
 	}
 }
@@ -92,15 +107,6 @@ void	init_hostname(t_ping *ping)
 	memcpy(&ping->dest_addr, res->ai_addr, sizeof(struct sockaddr_in));
 
 	freeaddrinfo(res);
-
-	// //check 
-
-	// char ip[INET_ADDRSTRLEN];
-	// inet_ntop(AF_INET, &ping->dest_addr.sin_addr, ip, sizeof(ip));
-	// printf("resolved IP: %s\n", ip);
-
-	// //check 
-
 }
 
 
