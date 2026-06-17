@@ -15,7 +15,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <arpa/inet.h>
-
+#include <ctype.h>
+#include <math.h>
+#include <signal.h>
 
 
 typedef struct s_ping
@@ -39,6 +41,7 @@ typedef struct s_ping
 	double	rtt_max;
 	double	rtt_sum;
 	double	rtt_sum_sq;
+	int		rtt_count;
 	
 	char	*dest;
 	char	display_name[256]; // [256] max len hostname.
@@ -56,6 +59,8 @@ int main(int argc, char **argv);
 // INIT.C
 void	init(t_ping *ping);
 void	print_help(void);
+bool	is_number(char *str);
+int		parse_number(char *optarg);
 void	parse_args(int argc, char **argv, t_ping *ping);
 void	init_hostname(t_ping *ping);
 void	init_socket(t_ping *ping);
@@ -70,6 +75,10 @@ void	send_packet(t_ping *ping, char *buffer);
 
 // RECEPTION.C
 void	receive_packet(t_ping *ping);
+void	decode_packet(t_ping *ping, char *recv_buffer, ssize_t recv_len);
 
+// PRINT.C
+void	print_header(t_ping *ping);
+void	print_stats(t_ping *ping);
 
 #endif
