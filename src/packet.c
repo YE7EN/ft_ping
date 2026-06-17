@@ -32,14 +32,11 @@ void	build_packet(t_ping *ping, char *buffer)
 		struct timeval *tv = (struct timeval *)payload;
 		gettimeofday(tv, NULL);
 	}
-	
-	
+
 	hdr->type = ICMP_ECHO;
 	hdr->code = 0;
 	hdr->un.echo.id = htons(ping->id);
 	hdr->un.echo.sequence = htons(ping->seq);
 	hdr->checksum = 0;
 	hdr->checksum = checksum(buffer, total_size);
-
-
 }
