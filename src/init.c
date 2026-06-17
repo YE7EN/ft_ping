@@ -38,14 +38,22 @@ bool	is_number(char *str)
 }
 
 
-int parse_number(char *optarg)
+int parse_number(char *optarg, long max)
 {
+	long val;
+
 	if (!is_number(optarg))
 	{
 		fprintf(stderr, "ft_ping: invalid value (`%s' near `%s')\n", optarg, optarg);
 		exit(1);
 	}
-	return atoi(optarg);
+	val = strtol(optarg, NULL, 10);
+	if (val > max || val < 0)
+	{
+		fprintf(stderr, "ft_ping: option value too big: %s\n", optarg);
+		exit(1);
+	}
+	return (int)val;
 }
 
 void	parse_args(int argc, char **argv, t_ping *ping)
@@ -58,10 +66,10 @@ void	parse_args(int argc, char **argv, t_ping *ping)
 		switch (opt) {
 			case 'v': ping->verbose = true; break;
 			case 'n': ping->numeric = true; break;
-			case 'c': ping->count = parse_number(optarg); ping->has_count = true; break;
-			case 's': ping->packet_size = parse_number(optarg); break;
-			case 'w': ping->timeout = parse_number(optarg); ping->has_timeout = true; break;
-			case 'W': ping->linger = parse_number(optarg); break;
+			case 'c': ping->count = parse_number(optarg, INT_MAX); ping->has_count = true; break;
+			case 's': ping->packet_size = parse_number(optarg, 65399); break;
+			case 'w': ping->timeout = parse_number(optarg, INT_MAX); ping->has_timeout = true; break;
+			case 'W': ping->linger = parse_number(optarg, INT_MAX); break;
 			case ':':
 				fprintf(stderr, "ft_ping: option requires an argument -- '%c'\n", optopt);
 				fprintf(stderr, "Try 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
@@ -112,7 +120,7 @@ void	init_hostname(t_ping *ping)
 
 void	init_socket(t_ping *ping)
 {
-	struct timeval time;
+	struct timeval tv;
 
 	ping->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	if (ping->sockfd < 0)
@@ -121,9 +129,9 @@ void	init_socket(t_ping *ping)
 		exit(1);
 	}
 
-	time.tv_sec = ping->linger;
-	time.tv_usec = 0;
-	if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &time, sizeof(time)) < 0)
+	tv.tv_sec = ping->linger;
+	tv.tv_usec = 0;
+	if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
 	{
 		perror("ft_ping: setsockopt failure");
 		exit (1);
