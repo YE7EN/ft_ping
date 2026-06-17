@@ -27,8 +27,11 @@ void	build_packet(t_ping *ping, char *buffer)
 	for (int i = 0; i < ping->packet_size; i++)
 		payload[i] = i;
 
-	struct timeval *tv = (struct timeval *)payload;
-	gettimeofday(tv, NULL);
+	if (ping->packet_size >= (int)sizeof(struct timeval))
+	{
+		struct timeval *tv = (struct timeval *)payload;
+		gettimeofday(tv, NULL);
+	}
 	
 	
 	hdr->type = ICMP_ECHO;
