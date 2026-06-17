@@ -41,6 +41,10 @@ void	decode_packet(t_ping *ping, char *recv_buffer, ssize_t recv_len)
 {
 	struct iphdr	*ip = (struct iphdr*)recv_buffer;
 	int				ip_header_len = ip->ihl * 4;
+
+	if (recv_len < ip_header_len + (int)sizeof(struct icmphdr))
+		return;
+
 	struct icmphdr	*icmp = (struct icmphdr *)(recv_buffer + ip_header_len);
 	struct timeval	time_recv;
 
