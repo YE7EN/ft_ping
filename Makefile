@@ -1,19 +1,19 @@
 NAME	= ft_ping
 CC		= cc
-CFLAGS	= -Wall -Werror -Wextra -Iheader
+CFLAGS	= -Wall -Werror -Wextra -Iheader -g
 
 SRC_DIR = src
 OBJ_DIR	= obj
 HDR_DIR = header
 
-SRCS	= main.c init.c packet.c send.c reception.c utils.c
+SRCS	= main.c init.c packet.c send.c reception.c print.c
 OBJS	= $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 HEADERS = $(HDR_DIR)/ping.h
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	@mkdir -p $(OBJ_DIR)
